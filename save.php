@@ -6,18 +6,36 @@ $connect = $db->connection();
 
 $ok = false;
 
-//SI EN POST EXISTE UNA VARIABLE ID, HARÁ UN UPDATE
+//UPDATE
 if (isset($_POST['id'])) {
+    $id = $_POST['id'];
+    $codigo = $_POST['codigo'];
+    $descripcion = $_POST['descripcion'];
+    $stock = $_POST['stock'];
+    $inventariable = isset($_POST['inventariable']); //EN CASO DE QUE INVENTARIABLE NO SE PRESIONE, SE ASIGNA VALOR 0
 
+    if ($stock == ''){
+        $stock == 0;
+    }
+
+    $query = $connect -> prepare("UPDATE productos SET codigo=?, descripcion=?, inventariable=?, stock=?  WHERE id=?");
+
+    $result = $query -> execute(array($codigo, $descripcion, $inventariable, $stock, $id));
+
+    if($result){
+        $ok = true;
+    }
+
+//CREATE
 } else {
     $codigo = $_POST['codigo'];
     $descripcion = $_POST['descripcion'];
     $stock = $_POST['stock'];
-    $inventariable = isset($_POST['inventariable']) ? $_POST['inventariable'] : 0; //EN CASO DE QUE INVENTARIABLE NO SE PRESIONE, SE ASIGNA VALOR 0
+    $inventariable = isset($_POST['inventariable']); //EN CASO DE QUE INVENTARIABLE NO SE PRESIONE, SE ASIGNA VALOR 0
 
-    if (stock == ''){
-        stock == 0;
-    } 
+    if ($stock == ''){
+        $stock == 0;
+    }
 
     $query = $connect -> prepare("INSERT INTO productos (codigo, descripcion, inventariable, stock, activo) 
     VALUES (:cod, :descr, :inv, :sto, 1)");
@@ -28,7 +46,7 @@ if (isset($_POST['id'])) {
 //SI TODO ESTÁ CORRECTO EN RESULT, LA VARIABLE $OK SE VUELVE TRUE E INSERTA 
     if ($result){
         $ok = true;
-    };
+    }
 }
 ?>
 
